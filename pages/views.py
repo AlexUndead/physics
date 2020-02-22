@@ -7,7 +7,7 @@ def index(request):
 
 def simple_page(request, url):
     page = get_object_or_404(Page, url = url, category=1, active=1)
-    return HttpResponse('hello world')
+    return render(request, 'simple_page.html', context={'title':page.title, 'description':page.description})
 
 def category_page(request, category, url):
     category = get_object_or_404(Category, url = category, active=1)
