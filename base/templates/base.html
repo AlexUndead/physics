@@ -33,7 +33,7 @@
                         </div>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Классное руководство</a>
+                        <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Классное руководство</a>
                         <div class="dropdown-menu" aria-labelledby="dropdown03">
                             <a class="dropdown-item" href="#">Психология</a>
                             <a class="dropdown-item" href="#">Родителям</a>
@@ -41,10 +41,10 @@
                         </div>
                     </li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item active"><a class="nav-link" href="{% url 'logout'%}?next={{request.path}}">Выйти</a></li>   
+                        <li class="nav-item active"><a class="nav-link" href="{% url 'logout'%}">Выйти</a></li>
                         <li class="nav-item"><p>Пользователь: {{ user.get_username }}</p></li>
                     {% else %}
-                        <li class="nav-item active"><a class="nav-link" href="{% url 'login'%}?next={{request.path}}">Войти</a></li>   
+                        <li class="nav-item active"><a class="nav-link" href="{% url 'login'%}">Войти</a></li>
                     {% endif %}
                 </ul>
                 <form class="form-inline my-2 my-md-0">
