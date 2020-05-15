@@ -5,3 +5,4 @@ __pycache__/
 .idea/
 .pages/__pycache__/
 .physics/__pycache__/
+.env
