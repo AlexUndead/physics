@@ -1,10 +1,8 @@
 {% extends "base.html" %} 
 
 {% block content %}
-	<div class="container">
-		<h1>{{ title }}</h1>
-		<div class="content">
-			<div>{{ description }}</div>
-		</div>
+	<h1 class="mt-5">{{ title }}</h1>
+	<div class="content">
+		{% autoescape off %}{{ description }}{% endautoescape %}
 	</div>
 {% endblock %}
