@@ -36,7 +36,7 @@ class CustomerLoginView(LoginView):
     """
     def dispatch(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return redirect('success_register')
+            return redirect('account_settings')
         else:
             return super().dispatch(request, *args, **kwargs)
 
