@@ -15,6 +15,20 @@ class RegisterFormView(FormView):
         return super(RegisterFormView, self).form_valid(form)
 
 
+class AccountSettingsView(View):
+    """
+    Страница настроект пользовательского аккаунта
+    """
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('login')
+        else:
+            return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'account_settings.html', {})
+
+
 class CustomerLoginView(LoginView):
     """
     Если пользователь зарегистрирован перенаправляет
