@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.views import View
+from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.views import LoginView
 
 
 class RegisterFormView(FormView):
@@ -11,6 +13,18 @@ class RegisterFormView(FormView):
     def form_valid(self, form):
         form.save()
         return super(RegisterFormView, self).form_valid(form)
+
+
+class CustomerLoginView(LoginView):
+    """
+    Если пользователь зарегистрирован перенаправляет
+    на страницу настроек
+    """
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect('success_register')
+        else:
+            return super().dispatch(request, *args, **kwargs)
 
 
 def success_register(request):
