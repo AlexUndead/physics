@@ -1,4 +1,5 @@
 /static
+/media/avatars/*
 
 __pycache__/
 *.py[cod]

@@ -1,12 +1,14 @@
 from django.contrib.auth import views
 from django.urls import path
-from . import views as custom_views
+from accounts import views as custom_views
 
 urlpatterns = [
+    path('account_settings/upload_avatar/', custom_views.UploadAvatarView.as_view(), name='upload_avatar'),
+    path('account_settings/change/<int:pk>/', custom_views.AccountSettingsChangeView.as_view(), name='upload_avatar'),
     path('account_settings/', custom_views.AccountSettingsView.as_view(), name='account_settings'),
     path('login/', custom_views.CustomerLoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
-    path('register/', custom_views.RegisterFormView.as_view(), name='register'),
+    path('register/', custom_views.CustomRegisterView.as_view(), name='register'),
     path('success_register/', custom_views.success_register, name='success_register'),
     path('password-change/', views.PasswordChangeView.as_view(), name='password_change'),
     path('password-change/done/', views.PasswordChangeDoneView.as_view(), name='password_change_done'),

@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'pages',
     'publications',
     'crispy_forms',
@@ -142,6 +143,8 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+STATIC_URL_AVATARS = 'static/avatars/'
+
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
 
@@ -149,13 +152,17 @@ LOGIN_REDIRECT_URL = '/'
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# Crispy settings
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
 # Media settings
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+##########################################################
+################### additional modules ###################
+##########################################################
+
+# Crispy settings
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Ckeditor settings
 CKEDITOR_UPLOAD_PATH = "uploads/"
@@ -164,4 +171,11 @@ CKEDITOR_CONFIG = {
     'default': {
         'toolbar': 'None'
     }
+}
+
+# Rest framework
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
 }
