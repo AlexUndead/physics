@@ -7,6 +7,7 @@ from accounts.models import UserProfile
 from accounts.forms import CustomRegisterForm, UploadAvatarForm
 from accounts.serializers import AccountSettingsDetailSerializer
 from accounts.permissions import IsOwnerOrReadOnly
+from accounts.decorators.views import redirect_not_registered_user
 from rest_framework import generics
 from rest_framework.authentication import SessionAuthentication
 
@@ -22,18 +23,12 @@ class CustomRegisterView(FormView):
         form.save()
         return super().form_valid(form)
 
-
 class AccountSettingsView(View):
     """
     Страница настроект пользовательского аккаунта
     """
 
-    def dispatch(self, request, *args, **kwargs):
-        if not self.request.user.is_authenticated:
-            return redirect('login')
-        else:
-            return super().dispatch(request, *args, **kwargs)
-
+    @redirect_not_registered_user('login')
     def get(self, request, *args, **kwargs):
         try:
             user_profile = UserProfile.objects.get(user=request.user.id)
@@ -57,11 +52,11 @@ class CustomerLoginView(LoginView):
     на страницу настроек
     """
 
-    def dispatch(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
             return redirect('account_settings')
         else:
-            return super().dispatch(request, *args, **kwargs)
+            return super().get(request, *args, **kwargs)
 
 
 def success_register(request):
