@@ -18,7 +18,7 @@ class AuthenticatedPartTest(TestCase):
         со страницы логина на страницу настроки кабинета
         """
         response = self.client.get('/accounts/login/')
-        self.assertRedirects(response, '/accounts/account_settings/')
+        self.assertRedirects(response, '/accounts/settings/')
 
     def create_user(self):
         """создание пользователя"""

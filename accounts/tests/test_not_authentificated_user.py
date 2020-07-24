@@ -9,5 +9,5 @@ class AuthenticatedPartTest(TestCase):
         редирект неаутентифицированного пользователя со
         страниц настройки личного кабирена
         """
-        response = self.client.get('/accounts/account_settings/')
+        response = self.client.get('/accounts/settings/')
         self.assertRedirects(response, '/accounts/login/')
