@@ -149,7 +149,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL_AVATARS = 'static/avatars/'
 
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/accounts/settings/'
 #LOGOUT_REDIRECT_URL = '/'
 
 # Mail settings
@@ -179,6 +179,9 @@ CKEDITOR_CONFIG = {
 
 # Rest framework
 REST_FRAMEWORK = {
+    'DEFAULT_AUHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]

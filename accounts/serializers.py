@@ -6,7 +6,7 @@ User = get_user_model()
 
 
 class AccountSettingsDetailSerializer(serializers.ModelSerializer):
-    #user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    email = serializers.EmailField(required=True)
 
     class Meta:
         model = User

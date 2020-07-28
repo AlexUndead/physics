@@ -1,15 +1,17 @@
 from django.views import View
 from django.shortcuts import render, redirect
+from django.http import HttpRequest
 from django.views.generic.edit import FormView
 from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView
 from accounts.models import UserProfile
 from accounts.forms import CustomRegisterForm, UploadAvatarForm
 from accounts.serializers import AccountSettingsDetailSerializer
-from accounts.permissions import IsOwnerOrReadOnly
 from accounts.decorators.views import redirect_not_registered_user
 from rest_framework import generics
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.response import Response as RestframeworkResponse
+from rest_framework.permissions import IsAuthenticated
 
 User = get_user_model()
 
@@ -23,7 +25,7 @@ class CustomRegisterView(FormView):
         form.save()
         return super().form_valid(form)
 
-class AccountSettingsView(View):
+class UserAccountSettingsView(View):
     """
     Страница настроект пользовательского аккаунта
     """
@@ -43,7 +45,7 @@ class AccountSettingsView(View):
 
         user_form = CustomRegisterForm(data)
 
-        return render(request, 'account_settings.html', {'user_profile': user_profile, 'user_form': user_form})
+        return render(request, 'user_account_settings.html', {'user_profile': user_profile, 'user_form': user_form})
 
 
 class CustomerLoginView(LoginView):
@@ -54,7 +56,7 @@ class CustomerLoginView(LoginView):
 
     def get(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return redirect('account_settings')
+            return redirect('user_account_settings')
         else:
             return super().get(request, *args, **kwargs)
 
@@ -84,8 +86,39 @@ class UploadAvatarView(View):
         return redirect('account_settings')
 
 
-class AccountSettingsChangeView(generics.RetrieveUpdateAPIView):
+class UserAccountSettingsChange(generics.RetrieveUpdateAPIView):
     serializer_class = AccountSettingsDetailSerializer
-    authentication_classes = (SessionAuthentication, )
     queryset = User.objects.all()
-    permission_classes = (IsOwnerOrReadOnly, )
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request: HttpRequest, format=None) -> RestframeworkResponse:
+        """Изменение данных пользователя"""
+        status = 'success'
+        message = 'Ваши данные сохранены успешно!'
+        user = User.objects.get(pk=request.user.id)
+
+        if self._has_differences_user_setting(request, user):
+            self._update_user_setting(request, user)
+        else:
+            status = 'info'
+            message = 'Ваши данные ничем не отличаются от прежних.'
+
+        return RestframeworkResponse({
+            'status':status, 
+            'message':message,
+        })
+
+    def _update_user_setting(self, request:HttpRequest, user: User) -> None:
+        """Обновление настроек пользователя"""
+        user.email=request.data['email']
+        user.first_name=request.data.get('first_name', '')
+        user.last_name=request.data.get('last_name', '')
+        user.save(force_update=True)
+
+    def _has_differences_user_setting(self, request: HttpRequest, user: User) -> bool:
+        """Проверка отличий настроек пользователя"""
+        
+        return any(
+            request.data.get(user_setting, '') != getattr(user, user_setting)
+            for user_setting in ['email', 'first_name', 'last_name']
+        )
