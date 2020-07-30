@@ -6,11 +6,18 @@
 <div class="">
     <h1 class="mt-5">Привет пользователь</h1>
     <div class="container">
-	<div class="row">
-		<div id="user-account-messages" class="col-md-12 jumbotron">
-			Ваши данные успешно сохраненны!			
+	{% if messages %}
+		<div id="user-account-messages">
+		    <ul class="messages">
+			{% for message in messages %}
+			    <li class="{{ message.tags }}">
+				{{ message|safe }}
+				<a href="#" class="close">✖</a>
+			    </li>
+			{% endfor %}
+		    </ul>
 		</div>
-	</div>
+	{% endif %}
         <div class="row">
             <div class="col-md-4 jumbotron">
                 {% if user_profile.avatar %}
@@ -27,11 +34,9 @@
             <div class="col-md-8 jumbotron">
 		    <form action="{% url 'user_account_setting_change' %}" class="form-signin" method="post">
                     <div class="form-group">
-                        {% csrf_token %}
-                        {{ user_form.first_name|as_crispy_field }}
-                        {{ user_form.last_name|as_crispy_field }}
-                        {{ user_form.email|as_crispy_field }}
-                        <button id="change-user-account-settings-form-submit" type="submit" class="btn btn-lg btn-primary btn-block">Сохранить настройки</button>
+			{% csrf_token %}
+			{{ user_form.as_p }}
+			<button id="change-user-account-settings-form-submit" type="submit" class="btn btn-lg btn-primary btn-block">Сохранить настройки</button>
                     </div>
                 </form>
             </div>

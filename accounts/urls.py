@@ -7,7 +7,7 @@ urlpatterns = [
     path('settings/change/', custom_views.UserAccountSettingsChange.as_view(),
         name='user_account_setting_change'),
     path('settings/', custom_views.UserAccountSettingsView.as_view(), name='user_account_settings'),
-    path('login/', custom_views.CustomerLoginView.as_view(), name='login'),
+    path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
     path('register/', custom_views.CustomRegisterView.as_view(), name='register'),
     path('success_register/', custom_views.success_register, name='success_register'),

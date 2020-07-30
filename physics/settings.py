@@ -152,6 +152,9 @@ STATIC_URL_AVATARS = 'static/avatars/'
 LOGIN_REDIRECT_URL = '/accounts/settings/'
 #LOGOUT_REDIRECT_URL = '/'
 
+# Redirect not authentificated users on login page
+LOGIN_URL = '/accounts/login/'
+
 # Mail settings
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
