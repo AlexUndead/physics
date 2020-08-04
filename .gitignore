@@ -7,3 +7,6 @@ __pycache__/
 .pages/__pycache__/
 .physics/__pycache__/
 .env
+.pyre_configuration
+.pyre
+.dev.env

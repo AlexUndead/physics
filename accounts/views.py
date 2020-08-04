@@ -1,19 +1,22 @@
+from typing import Union
 from django.views import View
 from django.shortcuts import render, redirect
+from django.http import HttpRequest, HttpResponse, HttpResponsePermanentRedirect
 from django.views.generic.edit import FormView
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView
-from accounts.models import UserProfile
-from accounts.forms import CustomRegisterForm, UploadAvatarForm
-from accounts.serializers import AccountSettingsDetailSerializer
-from accounts.permissions import IsOwnerOrReadOnly
-from rest_framework import generics
-from rest_framework.authentication import SessionAuthentication
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from accounts.models import UserSettings
+from accounts.forms import CustomRegisterForm, UploadAvatarForm, UserSettingsForm
+from accounts.decorators.views import redirect_not_registered_user
 
 User = get_user_model()
 
 
 class CustomRegisterView(FormView):
+    """Страница регистрации пользователя"""
     form_class = CustomRegisterForm
     success_url = '/accounts/success_register/'
     template_name = 'register.html'
@@ -22,47 +25,34 @@ class CustomRegisterView(FormView):
         form.save()
         return super().form_valid(form)
 
+class UserAccountSettingsView(LoginRequiredMixin, View):
+    """Страница настроект пользовательского аккаунта"""
+    def get(self, request: HttpRequest) -> HttpResponse:
+        user_profile, _ = UserSettings.objects.get_or_create(user=request.user)
+        user_form = UserSettingsForm(instance=request.user)
 
-class AccountSettingsView(View):
-    """
-    Страница настроект пользовательского аккаунта
-    """
+        return render(
+            request, 
+            'user_account_settings.html', 
+            {'user_profile': user_profile, 'user_form': user_form}
+        )
 
-    def dispatch(self, request, *args, **kwargs):
-        if not self.request.user.is_authenticated:
-            return redirect('login')
-        else:
-            return super().dispatch(request, *args, **kwargs)
+    def post(self, request: HttpRequest) -> Union[HttpResponse, HttpResponsePermanentRedirect]:
+        user_profile, _ = UserSettings.objects.get_or_create(user=request.user)
+        user_form = UserSettingsForm(
+            request.POST,
+            instance=request.user
+        )
 
-    def get(self, request, *args, **kwargs):
-        try:
-            user_profile = UserProfile.objects.get(user=request.user.id)
-        except UserProfile.DoesNotExist:
-            user_profile = None
-
-        try:
-            user = User.objects.get(id=request.user.id)
-            data = {'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}
-        except User.DoesNotExist:
-            pass
-
-        user_form = CustomRegisterForm(data)
-
-        return render(request, 'account_settings.html', {'user_profile': user_profile, 'user_form': user_form})
-
-
-class CustomerLoginView(LoginView):
-    """
-    Если пользователь зарегистрирован перенаправляет
-    на страницу настроек
-    """
-
-    def dispatch(self, request, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            return redirect('account_settings')
-        else:
-            return super().dispatch(request, *args, **kwargs)
-
+        if user_form.is_valid():
+            new_user_settings = user_form.save()
+            messages.success(request, 'Ваши данные успешно сохранены!')
+            return redirect('user_account_settings', permanent=True)
+        return render(
+            request, 
+            'user_account_settings.html', 
+            {'user_profile': user_profile, 'user_form': user_form}
+        )
 
 def success_register(request):
     return render(request, 'success_register.html', context={})
@@ -77,8 +67,8 @@ class UploadAvatarView(View):
         }
 
         try:
-            user_profile = UserProfile.objects.get(user=request.user.id)
-        except UserProfile.DoesNotExist:
+            user_profile = UserSettings.objects.get(user=request.user.id)
+        except UserSettings.DoesNotExist:
             user_profile = None
 
         form = UploadAvatarForm(data=data, files=request.FILES, instance=user_profile)
@@ -87,10 +77,3 @@ class UploadAvatarView(View):
             form.save()
 
         return redirect('account_settings')
-
-
-class AccountSettingsChangeView(generics.RetrieveUpdateAPIView):
-    serializer_class = AccountSettingsDetailSerializer
-    authentication_classes = (SessionAuthentication, )
-    queryset = User.objects.all()
-    permission_classes = (IsOwnerOrReadOnly, )

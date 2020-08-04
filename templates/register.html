@@ -7,7 +7,7 @@
     <form class="form-signin" method="post" action="">
         {% csrf_token %}
         {{ form|crispy }}
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="register-submit">Зарегистрироваться</button>
     </form>
 </div>
 {% endblock %}

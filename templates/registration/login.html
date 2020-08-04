@@ -9,7 +9,6 @@
             <h1 class="mt-5">Введите имя пользователя и пароль</h1>
             <form class="form-signin" method="post" action="{% url 'login' %}">
                 {% csrf_token %}
-
                 {% if form.errors %}
                     <div class="alert alert-danger">{{ form.non_field_errors }}</div>
                 {% endif %}
@@ -19,7 +18,7 @@
                         <input type="checkbox" value="remember-me"> Запомнить меня
                     </label>
                 </div>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+                <button id="login-form-submit" class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
                 <input type="hidden" name="next" value="{{ next }}" />
                 <p><a href="{% url 'password_reset' %}">Забыли пароль?</a></p>
             </form>
