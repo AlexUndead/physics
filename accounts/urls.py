@@ -4,8 +4,6 @@ from accounts import views as custom_views
 
 urlpatterns = [
     path('settings/upload_avatar/', custom_views.UploadAvatarView.as_view(), name='upload_avatar'),
-    path('settings/change/', custom_views.UserAccountSettingsChange.as_view(),
-        name='user_account_setting_change'),
     path('settings/', custom_views.UserAccountSettingsView.as_view(), name='user_account_settings'),
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),

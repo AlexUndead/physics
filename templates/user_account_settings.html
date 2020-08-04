@@ -6,40 +6,47 @@
 <div class="">
     <h1 class="mt-5">Привет пользователь</h1>
     <div class="container">
-	{% if messages %}
-		<div id="user-account-messages">
-		    <ul class="messages">
-			{% for message in messages %}
-			    <li class="{{ message.tags }}">
-				{{ message|safe }}
-				<a href="#" class="close">✖</a>
-			    </li>
-			{% endfor %}
-		    </ul>
-		</div>
-	{% endif %}
         <div class="row">
-            <div class="col-md-4 jumbotron">
-                {% if user_profile.avatar %}
-                    <img src="{% get_media_prefix %}{{ user_profile.avatar }}" alt="" width="300" height="300">
-                {% else %}
-                    <img src="{% static 'img/noavatar.jpg' %}" alt="noavatar">
-                {% endif %}
-                <form method="post" action="{% url 'upload_avatar' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="file" name="avatar"><br>
-                    <input type="submit">
-                </form>
-            </div>
-            <div class="col-md-8 jumbotron">
-		    <form action="{% url 'user_account_setting_change' %}" class="form-signin" method="post">
-                    <div class="form-group">
-			{% csrf_token %}
-			{{ user_form.as_p }}
-			<button id="change-user-account-settings-form-submit" type="submit" class="btn btn-lg btn-primary btn-block">Сохранить настройки</button>
-                    </div>
-                </form>
-            </div>
+		<div id="user-account-messages" class="col-md-12">
+			{% if messages %}
+			    <ul class="list-group">
+				{% for message in messages %}
+				    <li class="list-group-item list-group-item-success">
+					{{ message|safe }}
+				    </li>
+				{% endfor %}
+			    </ul>
+			{% endif %}
+		</div>
+		<div class="col-md-4 jumbotron">
+			{% if user_profile.avatar %}
+				<img src="{% get_media_prefix %}{{ user_profile.avatar }}" alt="" width="300" height="300">
+			{% else %}
+				<img src="{% static 'img/noavatar.jpg' %}" alt="noavatar">
+			{% endif %}
+			<form method="post" action="{% url 'upload_avatar' %}" enctype="multipart/form-data">
+				{% csrf_token %}
+				<input type="file" name="avatar"><br>
+				<input type="submit">
+			</form>
+		</div>
+		<div class="col-md-8 jumbotron">
+			<form action="{% url 'user_account_settings' %}" class="form-signin" method="post">
+				{% csrf_token %}
+
+				{% for field in user_form %}
+					<div class="form-group">
+						{% if field.errors %}
+							<div class="alert alert-danger">{{ field.errors }}</div>
+						{% endif %}
+
+						{{ field.label }}
+						{{ field }}
+					</div>
+				{% endfor %}
+				<button id="change-user-account-settings-form-submit" type="submit" class="btn btn-lg btn-primary btn-block">Сохранить настройки</button>
+			</form>
+		</div>
          </div>
     </div>
 </div>

@@ -9,7 +9,6 @@
             <h1 class="mt-5">Введите имя пользователя и пароль</h1>
             <form class="form-signin" method="post" action="{% url 'login' %}">
                 {% csrf_token %}
-
                 {% if form.errors %}
                     <div class="alert alert-danger">{{ form.non_field_errors }}</div>
                 {% endif %}

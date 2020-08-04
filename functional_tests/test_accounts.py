@@ -24,15 +24,15 @@ class UserAccountTest(LiveServerTestCase):
     def setUp(self) -> None:
         '''установка'''
         self.browser = webdriver.Chrome('/var/www/html/Projects/selenium-drivers/chrome/80/chromedriver')
+        self._open_main_page_as_authorized()
 
     def tearDown(self) -> None:
         '''демонтаж'''
-        #self.browser.quit()
+        self.browser.quit()
         User.objects.all().delete()
 
     def test_login_user(self) -> None:
         """авторизация пользователя"""
-        self._open_main_page_as_authorized()
 
         # Алексей убедился что он успешно авторизовался
         user_account_link = self.browser.find_element_by_id('user-account-link')
@@ -46,8 +46,6 @@ class UserAccountTest(LiveServerTestCase):
             id_first_name = 'user_changed_name'
             id_last_name = 'user_changed_surname'
             id_email = 'change@email.ru'
-
-        self._open_main_page_as_authorized()
 
         # Алексей решин изменить свои пользовательские настройки
         # в личном кабинете
@@ -66,7 +64,7 @@ class UserAccountTest(LiveServerTestCase):
 
         # Убедился что настройки сохранились
         user_account_messages = self.browser.find_element_by_id('user-account-messages')
-        self.assertEqual('Ваши данные успешно сохраненны!', user_account_messages.text)
+        self.assertEqual('Ваши данные успешно сохранены!', user_account_messages.text)
 
     def _open_main_page_as_authorized(self) -> None:
         """открытие гланой страницы авторизованным пользователем"""

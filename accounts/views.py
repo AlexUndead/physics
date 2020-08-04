@@ -1,7 +1,9 @@
+from typing import Union
 from django.views import View
 from django.shortcuts import render, redirect
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponsePermanentRedirect
 from django.views.generic.edit import FormView
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
@@ -26,14 +28,8 @@ class CustomRegisterView(FormView):
 class UserAccountSettingsView(LoginRequiredMixin, View):
     """Страница настроект пользовательского аккаунта"""
     def get(self, request: HttpRequest) -> HttpResponse:
-        user = request.user
-        user_profile, created = UserSettings.objects.get_or_create(user=user)
-        form_data = {
-            'first_name': user.first_name, 
-            'last_name': user.last_name, 
-            'email': user.email
-        }
-        user_form = UserSettingsForm(form_data)
+        user_profile, _ = UserSettings.objects.get_or_create(user=request.user)
+        user_form = UserSettingsForm(instance=request.user)
 
         return render(
             request, 
@@ -41,6 +37,22 @@ class UserAccountSettingsView(LoginRequiredMixin, View):
             {'user_profile': user_profile, 'user_form': user_form}
         )
 
+    def post(self, request: HttpRequest) -> Union[HttpResponse, HttpResponsePermanentRedirect]:
+        user_profile, _ = UserSettings.objects.get_or_create(user=request.user)
+        user_form = UserSettingsForm(
+            request.POST,
+            instance=request.user
+        )
+
+        if user_form.is_valid():
+            new_user_settings = user_form.save()
+            messages.success(request, 'Ваши данные успешно сохранены!')
+            return redirect('user_account_settings', permanent=True)
+        return render(
+            request, 
+            'user_account_settings.html', 
+            {'user_profile': user_profile, 'user_form': user_form}
+        )
 
 def success_register(request):
     return render(request, 'success_register.html', context={})
@@ -65,15 +77,3 @@ class UploadAvatarView(View):
             form.save()
 
         return redirect('account_settings')
-
-
-class UserAccountSettingsChange(LoginRequiredMixin, View):
-    """Изменение настроек личного кабинета пользователя"""
-    def post(self, request: HttpRequest) -> HttpResponse:
-        user_form = UserSettingsForm(
-            request.POST,
-            instance=request.user
-        )
-        if user_form.is_valid():
-            user_form.save()
-        return redirect('user_account_settings')
