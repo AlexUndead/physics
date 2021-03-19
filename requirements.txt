@@ -4,7 +4,7 @@ django-ckeditor==5.9.0
 django-crispy-forms==1.9.0
 django-environ==0.4.5
 django-js-asset==1.2.2
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 mysqlclient==1.4.6
 Pillow==7.1.2
 psycopg2-binary==2.8.5
